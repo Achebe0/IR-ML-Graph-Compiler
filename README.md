@@ -34,25 +34,51 @@ The JSON representation is intended as the interface between the Python
 frontend and the C++ compiler.
 
 
-**PyTorch model (nn.Module)
-     ↓
-FX export.export() — records ops without executing them
-     ↓
-Serialize FX graph → JSON (your schema: op, inputs, shape/dtype, attrs)
-     ↓
-C++ parses JSON → builds Node/Graph IR objects
-     ↓
-Pass 1: Dead node elimination — DFS backward from outputs, delete unreached nodes
-     ↓
-Pass 2: Constant folding — evaluate all-constant subgraphs once, replace with constant node
-     ↓
-Pass 3: Operator fusion — merge matmul→relu (single consumer) into one fused node
-     ↓
-Topological sort — determine valid execution order
-     ↓
-Backend lowering:
-   - CPU: naive per-node execution
-   - CUDA: fused nodes → hand-written kernel; rest → naive
-     ↓
-Benchmark: your pipeline vs. PyTorch eager vs. torch.compile
-**
+## Compilation & Execution Pipeline
+
+```text
+PyTorch model (`nn.Module`)
+        │
+        ▼
+`FX export.export()`
+Records operations without executing them
+        │
+        ▼
+Serialize FX graph → JSON
+Schema: `op`, `inputs`, `shape/dtype`, `attrs`
+        │
+        ▼
+C++ parses JSON
+Builds `Node` / `Graph` IR objects
+        │
+        ▼
+Pass 1: Dead Node Elimination
+DFS backward from outputs and remove unreached nodes
+        │
+        ▼
+Pass 2: Constant Folding
+Evaluate all-constant subgraphs once and replace them
+with a constant node
+        │
+        ▼
+Pass 3: Operator Fusion
+Fuse `matmul → relu` (single consumer) into one fused node
+        │
+        ▼
+Topological Sort
+Determine a valid execution order
+        │
+        ▼
+Backend Lowering
+├── CPU
+│   └── Naive per-node execution
+│
+└── CUDA
+    ├── Fused nodes → Hand-written CUDA kernel
+    └── Remaining nodes → Naive execution
+        │
+        ▼
+Benchmark
+Compare against:
+├── PyTorch eager
+└── `torch.compile`
