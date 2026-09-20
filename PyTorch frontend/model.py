@@ -23,6 +23,9 @@ def torch_export_ffn(d_model=512, d_ff=2048, batch_size=1):
     return torch.export.export(model, (example_input,))
 
 
-
+def arg_to_ref():
+    pass
+def serialize_graph_json():
+    pass
 
 
