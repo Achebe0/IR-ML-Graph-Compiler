@@ -18,8 +18,10 @@ struct Node {
 };
 
 struct Graph {
-    //format
-    //version
-    //nodes
-    //inputs and outputs
+    std::string format;
+    int version;
+    std::vector<Node> nodes;
+    std::nlohmann:: json input;
+    std::nhlohmann::json output;
+
 };
