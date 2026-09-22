@@ -5,23 +5,16 @@
 #ifndef IR_ML_GRAPH_COMPILER_NODE_H
 #define IR_ML_GRAPH_COMPILER_NODE_H
 
-#endif //IR_ML_GRAPH_COMPILER_NODE_H
-#include  <nlohmann/json.hpp>
+#include <nlohmann/json.hpp>
+
+#include <string>
 
 struct Node {
     std::string id;
     std::string op;
-    std::target target;
+    std::string target;
     std::nlohmann::json args;
     std::nlohmann::json kwargs;
-
 };
 
-struct Graph {
-    std::string format;
-    int version;
-    std::vector<Node> nodes;
-    std::nlohmann:: json input;
-    std::nhlohmann::json output;
-
-};
+#endif // IR_ML_GRAPH_COMPILER_NODE_H
